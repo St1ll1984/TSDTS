@@ -13,6 +13,9 @@ import {
 import { createStackNavigator } from "@react-navigation/stack";
 import ListScreen from "./ListScreen";
 import Menu from "./Menu";
+import ScanScreen from "./ScanScreen";
+import AuthScreen from "./AuthScreen";
+import ConfigScreen from "./ConfigScreen";
 import { HomeStackNavigatorParamList } from "./type";
 import * as SQLite from "expo-sqlite";
 import React, { useEffect } from "react";
@@ -69,6 +72,9 @@ export default function App() {
         <SQLiteProvider databaseName="mySQLiteDB.db" useSuspense>
           <Stack.Navigator initialRouteName="Menu">
             <Stack.Screen name="Menu" component={Menu} />
+            <Stack.Screen name="ScanScreen" component={ScanScreen}/>
+            <Stack.Screen name="ConfigScreen" component={ConfigScreen} />
+            <Stack.Screen name="AuthScreen" component={AuthScreen} />
             <Stack.Screen
               name="ListScreen"
               component={ListScreen}

@@ -9,6 +9,7 @@ import { Documents } from './type';
 import { useSQLiteContext } from 'expo-sqlite/next';
 import { ScrollView } from 'react-native-gesture-handler';
 import DocumentsList from './components/DocumentsList';
+import { HomeStackNavigatorProp } from "./type";
 //import React from 'react';
 
 
@@ -20,17 +21,18 @@ import DocumentsList from './components/DocumentsList';
 // };
 
 
-const ListScreen = ({ route } )=> {
+const ListScreen = ( {route}:any )=> {
   const { paramName } = route.params;
   const navigation = useNavigation();
   const [documents, setDocuments] = useState<Documents[]>([]);
   const db = useSQLiteContext();
+  //const navigation = useNavigation<HomeStackNavigatorProp>();
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: 'Новый заголовок'+{paramName}, // Замените 'Новый заголовок' на желаемый заголовок
-    });
-  },);
+  // useLayoutEffect(() => {
+    // navigation.setOptions({
+    //   title: 'Новый заголовок'+{paramName}, // Замените 'Новый заголовок' на желаемый заголовок
+    // });
+  // },);
 
   
 
@@ -54,7 +56,7 @@ useEffect(()=> {
       <DocumentsList 
       documents={documents}
       />
-
+      <Text>{paramName}</Text>
       <StatusBar style="auto" />
     </ScrollView>
   );

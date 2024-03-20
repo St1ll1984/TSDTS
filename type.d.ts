@@ -30,5 +30,6 @@ export interface Documents {
     articleUnit: string;
     docType: "Packages" | "Goodsreceipt" | "Goodsinventory";
     docStatus: "Formed" | "Scanning" | "Done";
+    articleQtyScan: number;
 
 }
