@@ -30,8 +30,9 @@ const ScanScreen = ({ route }:any) => {
   async function getData(count: number) {
     const result = await db.getAllAsync<Documents>(`Select * from documents `);
     console.log(result);
-    
-    textInputRef.current.focus(TextInput);
+    if (textInputRef != null){
+      textInputRef.current.focus(TextInput);
+    }
     Keyboard.dismiss();
     if (result.length > 0) {
       name = result[0].articleName;

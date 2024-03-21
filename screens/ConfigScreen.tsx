@@ -1,11 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { HomeStackNavigatorProp } from './type';
+import { HomeStackNavigatorProp } from '../type';
 
 
 
- const AuthScreen=()=> {
+ const ConfigScreen=()=> {
   
   return (
    <View></View>
@@ -28,4 +28,4 @@ const styles = StyleSheet.create({
  },
 });
 
-export default AuthScreen;
+export default ConfigScreen;

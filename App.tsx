@@ -14,8 +14,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import ListScreen from "./ListScreen";
 import Menu from "./Menu";
 import ScanScreen from "./ScanScreen";
-import AuthScreen from "./AuthScreen";
-import ConfigScreen from "./ConfigScreen";
+import AuthScreen from "./screens/AuthScreen";
+import ConfigScreen from "./screens/ConfigScreen";
 import { HomeStackNavigatorParamList } from "./type";
 import * as SQLite from "expo-sqlite";
 import React, { useEffect } from "react";
@@ -31,7 +31,8 @@ const loadDatabase = async () => {
   const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
 
   const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
-  if (!fileInfo.exists) {
+  if (fileInfo.exists) {
+    ////if (!fileInfo.exists)
     await FileSystem.makeDirectoryAsync(
       `${FileSystem.documentDirectory}SQLite`,
       { intermediates: true }
@@ -72,14 +73,19 @@ export default function App() {
         <SQLiteProvider databaseName="mySQLiteDB.db" useSuspense>
           <Stack.Navigator initialRouteName="Menu">
             <Stack.Screen name="Menu" component={Menu} />
-            <Stack.Screen name="ScanScreen" component={ScanScreen}/>
-            <Stack.Screen name="ConfigScreen" component={ConfigScreen} />
+            <Stack.Screen name="ScanScreen" component={ScanScreen} />
+            <Stack.Screen name="ConfigScreen" component={ConfigScreen}  options={{
+                // Set the presentation mode to modal for our modal route.
+                presentation: "modal",
+              }}/>
             <Stack.Screen name="AuthScreen" component={AuthScreen} />
             <Stack.Screen
               name="ListScreen"
               component={ListScreen}
               options={{
                 headerTitle: "Documents",
+                //headerStyle: styles.header,
+                headerTitleStyle: styles.header,
               }}
             />
           </Stack.Navigator>
@@ -88,3 +94,11 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    width: "auto",
+    fontSize: 16, // Размер шрифта
+    flexWrap: "wrap",
+  },
+});

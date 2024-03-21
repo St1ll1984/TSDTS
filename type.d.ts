@@ -19,6 +19,7 @@ export type HomeStackNavigatorProp = NativeStackScreenProps<
   ScanScreen
 >;
 
+
 export interface Documents {
     id: number;
     docId: string;
@@ -28,8 +29,11 @@ export interface Documents {
     articleName: string;
     articleQty: number;
     articleUnit: string;
-    docType: "Packages" | "Goodsreceipt" | "Goodsinventory";
-    docStatus: "Formed" | "Scanning" | "Done";
+    docType: DocType; ////"Packages" | "Goodsreceipt" | "Goodsinventory";
+    docStatus: DocStatus; //"Formed" | "Scanning" | "Done";
     articleQtyScan: number;
+    articleRowNumber: number;
 
-}
+};
+
+

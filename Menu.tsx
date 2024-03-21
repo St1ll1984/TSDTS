@@ -1,20 +1,25 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { HomeStackNavigatorProp } from './type';
+import { HomeStackNavigatorProp} from './type';
+import { DocType } from './enum';
+
 //import ListScreen from "./ListScreen";
 
 
  const HomeScreen=()=> {
   const navigation = useNavigation<HomeStackNavigatorProp>();
-  const Packages = 'Packages';
+  // const DocumType = DocType;
+ 
+  let Packages: DocType = DocType.Packages;
+  console.log(Packages);
   return (
     <View style={styles.container}>
-      <Button title='Упаковочные листы' onPress={()=>navigation.navigate('ListScreen',  { paramName: 'Packages' })}></Button>
+      <Button title='Упаковочные листы' onPress={()=>navigation.navigate('ListScreen',  { paramName: DocType.Packages })}></Button>
       <Text> </Text>
-      <Button title='Поступление товаров' onPress={()=>navigation.navigate('ListScreen', { paramName: 'Goodsreceipt' })}></Button>
+      <Button title='Поступление товаров' onPress={()=>navigation.navigate('ListScreen', { paramName: DocType.Goodsreceipt })}></Button>
       <Text> </Text>
-      <Button title='Инвентаризация' onPress={()=>navigation.navigate('ListScreen', { paramName: 'Goodsinventory' })} ></Button>
+      <Button title='Инвентаризация' onPress={()=>navigation.navigate('ListScreen', { paramName: DocType.Goodsinventory })} ></Button>
       <StatusBar style="auto" />
     </View>
   );

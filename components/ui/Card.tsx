@@ -9,7 +9,7 @@ export default function Card({ children, style = {} }: CardProps) {
     <View
       style={{
         padding: 15,
-        borderRadius: 15,
+        borderRadius: 0,
         backgroundColor: "lightblue",
         elevation: 3,
         shadowColor: "#000",
