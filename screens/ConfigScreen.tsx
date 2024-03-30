@@ -1,52 +1,103 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { HomeStackNavigatorProp, IUser } from '../types/type';
+import React, { useEffect, useRef, useState } from 'react';
+import { Keyboard, StyleSheet, Text, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
-import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import usersDb from '../temporaryDB/users';
+import { IUserJSON } from '../types/type';
+import getUsers from '../api/getUsers';
+import { Button, Dropdown, Loader } from '../components';
+import { COLORS } from '../const/colors';
 
 const ConfigScreen = () => {
+	const [isLoading, setIsLoading] = useState(false);
 	const [company, setCompany] = useState<string>('');
-	const [users, setUsers] = useState<IUser[]>([]);
-	const [currentUser, setCurrentUser] = useState<IUser>();
-	const onPressCompanyBtn = () => {
-		setUsers(usersDb);
+	const [users, setUsers] = useState<IUserJSON[]>([]);
+	const [currentUser, setCurrentUser] = useState<IUserJSON>();
+	const inputRef = useRef<TextInput | null>(null);
+
+	const getSavedInfoConfig = async (key: string) => {
+		try {
+			const savedInfo = await AsyncStorage.getItem(key);
+			if (savedInfo !== null) {
+				return JSON.parse(savedInfo);
+			}
+		} catch (error) {
+			console.error(error);
+		}
+		return null;
+	};
+
+	const loadSavedInfo = async (key: string, func: (value: any) => void) => {
+		const savedInfo = await getSavedInfoConfig(key);
+		func(savedInfo);
+	};
+
+	useEffect(() => {
+		loadSavedInfo('allUsersInStorage', setUsers);
+		loadSavedInfo('currentUserInStorage', setCurrentUser);
+		loadSavedInfo('companyInStorage', setCompany);
+	}, []);
+
+	const fetchUsers = async () => {
+		try {
+			const usersFromAPI = await getUsers();
+			setUsers(usersFromAPI);
+			await AsyncStorage.setItem('allUsersInStorage', JSON.stringify(users));
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const handlePressButton = async () => {
+		Keyboard.dismiss();
+		setIsLoading(true);
+
+		await fetchUsers();
+		inputRef.current?.clear();
+	};
+
+	const handleChangeInput = async (value: string) => {
+		setCompany(value);
+		await AsyncStorage.setItem('companyInStorage', JSON.stringify(value));
 	};
 
 	return (
 		<View style={styles.container}>
+			<Loader visible={isLoading} />
 			<View>
 				<View>
-					<Text>ЄДРПОУ</Text>
+					<Text style={styles.subtitle}>ЄДРПОУ: {company}</Text>
 					<TextInput
 						style={
-							company ? [styles.input, { borderColor: 'gray' }] : styles.input
+							company
+								? [styles.input, { borderColor: COLORS.grey }]
+								: styles.input
 						}
+						ref={inputRef}
 						placeholder="ЄДРПОУ"
 						value={company}
 						keyboardType="numeric"
-						onChangeText={(value) => setCompany(value)}
+						onChangeText={(value) => handleChangeInput(value)}
 					/>
-					<TouchableOpacity
-						style={
-							!company
-								? [styles.button, { backgroundColor: 'gray' }]
-								: styles.button
-						}
-						disabled={!company}
-						onPress={onPressCompanyBtn}
-					>
-						<Text style={styles.buttonText}>Дальше</Text>
-					</TouchableOpacity>
 				</View>
+				{users.length > 0 ? (
+					<View style={styles.dropdownWrapper}>
+						<Dropdown
+							data={users}
+							setData={setCurrentUser}
+							currentUser={currentUser}
+						/>
+					</View>
+				) : null}
+				<Button
+					title={
+						users.length ? 'Обновить пользователей' : 'Загрузить пользователей'
+					}
+					disabled={!company}
+					onPress={handlePressButton}
+				/>
 			</View>
-			{users.length > 0 ? (
-				<View>
-					<Text>FlatList</Text>
-				</View>
-			) : null}
 		</View>
 	);
 };
@@ -54,41 +105,29 @@ const ConfigScreen = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#eee',
+		backgroundColor: COLORS.white,
 		padding: 15,
 	},
+	subtitle: {
+		fontSize: 20,
+		marginHorizontal: 15,
+	},
 	input: {
-		backgroundColor: 'white',
-		borderColor: 'red',
+		backgroundColor: COLORS.white,
+		borderColor: COLORS.red,
 		width: '100%',
 		borderWidth: 1,
 		borderRadius: 8,
 		padding: 10,
 		height: 45,
-		marginLeft: 'auto',
-		marginRight: 'auto',
+		marginHorizontal: 'auto',
 		marginTop: 5,
 		marginBottom: 10,
 		fontSize: 20,
 	},
-	inputFocus: {
-		borderColor: 'green',
-	},
-	button: {
-		alignItems: 'center',
-		justifyContent: 'center',
-		paddingVertical: 12,
-		paddingHorizontal: 32,
-		borderRadius: 20,
-		elevation: 3,
-		backgroundColor: 'blue',
-	},
-	buttonText: {
-		fontSize: 16,
-		fontWeight: 'bold',
-		letterSpacing: 1.2,
-		textTransform: 'uppercase',
-		color: 'white',
+	dropdownWrapper: {
+		marginTop: 20,
+		marginBottom: 50,
 	},
 });
 

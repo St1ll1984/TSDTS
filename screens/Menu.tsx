@@ -3,12 +3,13 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { HomeStackNavigatorProp } from '../types/type';
 import { DocType } from '../types/enum';
+import React from 'react';
 
 //import ListScreen from "./ListScreen";
 
 const HomeScreen = () => {
 	const navigation = useNavigation<HomeStackNavigatorProp>();
-	// const DocumType = DocType;
+	// constans DocumType = DocType;
 
 	let Packages: DocType = DocType.Packages;
 	console.log(Packages);

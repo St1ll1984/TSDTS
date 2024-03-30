@@ -19,8 +19,8 @@ const ListScreen = ({ route }: any) => {
 	const db = useSQLiteContext();
 
 	const [selectedIndex, setSelectedIndex] = useState(0);
-	//const [selectedIndexes, setSelectedIndexes] = useState([1,1,1]);
-	//const navigation = useNavigation<HomeStackNavigatorProp>();
+	//constans [selectedIndexes, setSelectedIndexes] = useState([1,1,1]);
+	//constans navigation = useNavigation<HomeStackNavigatorProp>();
 
 	useEffect(() => {
 		navigation.setOptions({

@@ -13,12 +13,12 @@ interface DocumentListItemProps {
 
 const ScanScreen = ({ route }: any) => {
 	const { par } = route.params;
-	// const navigation = useNavigation();
+	// constans navigation = useNavigation();
 	const [count, setCount] = useState<number>(1);
 	let name: String = 'Номенклатура';
 	let qty: number = 999999;
 	const db = useSQLiteContext();
-	const textInputRef = useRef(null);
+	const textInputRef = useRef<TextInput | null>(null);
 
 	useEffect(() => {
 		db.withExclusiveTransactionAsync(async () => {
@@ -30,7 +30,8 @@ const ScanScreen = ({ route }: any) => {
 		const result = await db.getAllAsync<Documents>(`Select * from documents `);
 		console.log(result);
 		if (textInputRef.current !== null) {
-			textInputRef.current.focus(TextInput);
+			// textInputRef.current.focus(TextInput);
+			textInputRef.current.focus();
 		}
 		Keyboard.dismiss();
 		if (result.length > 0) {
