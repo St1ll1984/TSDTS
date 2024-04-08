@@ -1,19 +1,21 @@
 import React from 'react';
 import SelectDropdown from 'react-native-select-dropdown';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 import { COLORS } from '../const/colors';
 import { HomeStackNavigatorProp, IUserJSON } from '../types/type';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { ButtonIcon } from './index';
 
 interface IDropdownProps {
 	data: IUserJSON[];
 	setData: (value: IUserJSON) => void;
 	currentUser?: IUserJSON;
+	onPress: () => void;
 }
 
-const Dropdown = ({ data, setData, currentUser }: IDropdownProps) => {
+const Dropdown = ({ data, setData, currentUser, onPress }: IDropdownProps) => {
 	const navigation = useNavigation<HomeStackNavigatorProp>();
 	const handleSelect = async (value: IUserJSON) => {
 		setData(value);
@@ -39,6 +41,14 @@ const Dropdown = ({ data, setData, currentUser }: IDropdownProps) => {
 							color={COLORS.black}
 							style={styles.dropdownButtonArrowStyle}
 						/>
+						<ButtonIcon>
+							<MaterialCommunityIcons
+								name="send"
+								size={30}
+								color={COLORS.blue}
+								onPress={onPress}
+							/>
+						</ButtonIcon>
 					</View>
 				);
 			}}
@@ -63,11 +73,10 @@ const styles = StyleSheet.create({
 		height: 50,
 		backgroundColor: COLORS.lightGrey,
 		borderRadius: 12,
+		width: '100%',
 		flexDirection: 'row',
-		justifyContent: 'center',
 		alignItems: 'center',
-		paddingHorizontal: 15,
-		// marginTop: 20,
+		paddingHorizontal: 10,
 	},
 	dropdownButtonTxtStyle: {
 		flex: 1,
@@ -77,6 +86,7 @@ const styles = StyleSheet.create({
 	},
 	dropdownButtonArrowStyle: {
 		fontSize: 24,
+		marginRight: 10,
 	},
 	dropdownButtonIconStyle: {
 		fontSize: 24,

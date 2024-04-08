@@ -1,71 +1,79 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Keyboard, StyleSheet, Text, View } from 'react-native';
+import {
+	Keyboard,
+	KeyboardAvoidingView,
+	StyleSheet,
+	Text,
+	View,
+} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IUserJSON } from '../types/type';
+import { HomeStackNavigatorProp, IUserJSON } from '../types/type';
 import getUsers from '../api/getUsers';
-import { Button, Dropdown, Loader } from '../components';
+import { ButtonCustom, Dropdown, Loader } from '../components';
 import { COLORS } from '../const/colors';
+import { useNavigation } from '@react-navigation/native';
 
 const ConfigScreen = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [company, setCompany] = useState<string>('');
-	const [users, setUsers] = useState<IUserJSON[]>([]);
-	const [currentUser, setCurrentUser] = useState<IUserJSON>();
+	// const [users, setUsers] = useState<IUserJSON[]>([]);
+	// const [currentUser, setCurrentUser] = useState<IUserJSON>();
 	const inputRef = useRef<TextInput | null>(null);
+	const navigation = useNavigation<HomeStackNavigatorProp>();
 
-	const getSavedInfoConfig = async (key: string) => {
-		try {
-			const savedInfo = await AsyncStorage.getItem(key);
-			if (savedInfo !== null) {
-				return JSON.parse(savedInfo);
-			}
-		} catch (error) {
-			console.error(error);
-		}
-		return null;
-	};
+	// const getSavedInfoConfig = async (key: string) => {
+	// 	try {
+	// 		const savedInfo = await AsyncStorage.getItem(key);
+	// 		if (savedInfo !== null) {
+	// 			return JSON.parse(savedInfo);
+	// 		}
+	// 	} catch (error) {
+	// 		console.error(error);
+	// 	}
+	// 	return null;
+	// };
 
-	const loadSavedInfo = async (key: string, func: (value: any) => void) => {
-		const savedInfo = await getSavedInfoConfig(key);
-		func(savedInfo);
-	};
+	// const loadSavedInfo = async (key: string, func: (value: any) => void) => {
+	// 	const savedInfo = await getSavedInfoConfig(key);
+	// 	func(savedInfo);
+	// };
 
-	useEffect(() => {
-		loadSavedInfo('allUsersInStorage', setUsers);
-		loadSavedInfo('currentUserInStorage', setCurrentUser);
-		loadSavedInfo('companyInStorage', setCompany);
-	}, []);
+	// useEffect(() => {
+	// 	loadSavedInfo('allUsersInStorage', setUsers);
+	// 	loadSavedInfo('currentUserInStorage', setCurrentUser);
+	// 	loadSavedInfo('companyInStorage', setCompany);
+	// }, []);
 
-	const fetchUsers = async () => {
-		try {
-			const usersFromAPI = await getUsers();
-			setUsers(usersFromAPI);
-			await AsyncStorage.setItem('allUsersInStorage', JSON.stringify(users));
-		} catch (error) {
-			console.log(error);
-		} finally {
-			setIsLoading(false);
-		}
-	};
+	// const fetchUsers = async () => {
+	// 	try {
+	// 		const usersFromAPI = await getUsers();
+	// 		setUsers(usersFromAPI);
+	// 		await AsyncStorage.setItem('allUsersInStorage', JSON.stringify(users));
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 	} finally {
+	// 		setIsLoading(false);
+	// 	}
+	// };
 
-	const handlePressButton = async () => {
-		Keyboard.dismiss();
-		setIsLoading(true);
-
-		await fetchUsers();
-		inputRef.current?.clear();
-	};
+	// const handlePressButton = async () => {
+	// 	Keyboard.dismiss();
+	// 	setIsLoading(true);
+	//
+	// 	await fetchUsers();
+	// 	inputRef.current?.clear();
+	// };
 
 	const handleChangeInput = async (value: string) => {
 		setCompany(value);
-		await AsyncStorage.setItem('companyInStorage', JSON.stringify(value));
+		// await AsyncStorage.setItem('companyInStorage', JSON.stringify(value));
 	};
 
 	return (
-		<View style={styles.container}>
+		<KeyboardAvoidingView style={styles.container} behavior="height">
 			<Loader visible={isLoading} />
-			<View>
+			<View style={{ flex: 1, justifyContent: 'space-between' }}>
 				<View>
 					<Text style={styles.subtitle}>ЄДРПОУ: {company}</Text>
 					<TextInput
@@ -80,31 +88,34 @@ const ConfigScreen = () => {
 						keyboardType="numeric"
 						onChangeText={(value) => handleChangeInput(value)}
 					/>
+					<ButtonCustom
+						title={'Save'}
+						disabled={!company}
+						onPress={() => navigation.navigate('Login')}
+					/>
 				</View>
-				{users.length > 0 ? (
-					<View style={styles.dropdownWrapper}>
-						<Dropdown
-							data={users}
-							setData={setCurrentUser}
-							currentUser={currentUser}
-						/>
-					</View>
-				) : null}
-				<Button
-					title={
-						users.length ? 'Обновить пользователей' : 'Загрузить пользователей'
-					}
-					disabled={!company}
-					onPress={handlePressButton}
-				/>
+				<View style={{ gap: 20 }}>
+					<ButtonCustom
+						title={'Обновить задания'}
+						disabled={!company}
+						// onPress={handlePressButton}
+					/>
+					<ButtonCustom
+						title={'Обновить пользователей'}
+						disabled={!company}
+						// onPress={handlePressButton}
+					/>
+				</View>
 			</View>
-		</View>
+		</KeyboardAvoidingView>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		justifyContent: 'space-between',
+		alignItems: 'stretch',
 		backgroundColor: COLORS.white,
 		padding: 15,
 	},

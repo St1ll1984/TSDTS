@@ -5,8 +5,8 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 export type HomeStackNavigatorParamList = {
 	Menu: undefined;
 	ListScreen: undefined;
-	AuthScreen: undefined;
-	ConfigScreen: undefined;
+	Login: undefined;
+	Config: undefined;
 	ScanScreen: undefined;
 };
 
@@ -14,7 +14,7 @@ export type HomeStackNavigatorProp = NativeStackScreenProps<
 	HomeStackNavigatorParamList,
 	Menu,
 	ListScreen,
-	AuthScreen,
+	LoginScreen,
 	ConfigScreen,
 	ScanScreen
 >;
