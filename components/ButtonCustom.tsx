@@ -6,18 +6,27 @@ interface IButtonProps {
 	disabled?: boolean;
 	title?: string;
 	onPress?: () => void;
+	extraStyle?: string;
 	children?: React.ReactNode;
+	width?: number;
 }
 
-const Button = ({ title, disabled, children, onPress }: IButtonProps) => {
+const ButtonCustom = ({
+	title,
+	disabled,
+	children,
+	onPress,
+	width,
+}: IButtonProps) => {
 	return (
 		<TouchableOpacity
 			activeOpacity={0.6}
-			style={
+			style={[
 				disabled
 					? [styles.button, { backgroundColor: COLORS.grey }]
-					: styles.button
-			}
+					: styles.button,
+				{ width },
+			]}
 			disabled={disabled}
 			onPress={onPress}
 		>
@@ -33,8 +42,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		paddingVertical: 12,
-		paddingHorizontal: 32,
-		borderRadius: 20,
+		borderRadius: 10,
 		elevation: 3,
 		backgroundColor: COLORS.blue,
 	},
@@ -42,9 +50,8 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontWeight: 'bold',
 		letterSpacing: 1.2,
-		// textTransform: 'uppercase',
 		color: COLORS.light,
 	},
 });
 
-export default Button;
+export default ButtonCustom;

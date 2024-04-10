@@ -14,7 +14,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import ListScreen from './screens/ListScreen';
 import Menu from './screens/Menu';
 import ScanScreen from './screens/ScanScreen';
-import AuthScreen from './screens/AuthScreen';
+import AuthScreen from './screens/LoginScreen';
 import ConfigScreen from './screens/ConfigScreen';
 import { HomeStackNavigatorParamList } from './types/type';
 import * as SQLite from 'expo-sqlite';
@@ -22,6 +22,7 @@ import React, { useEffect } from 'react';
 import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system';
 import { SQLiteProvider } from 'expo-sqlite/next';
+import { MainNavigation } from './navigations';
 
 const loadDatabase = async () => {
 	//db
@@ -71,30 +72,31 @@ export default function App() {
 				}
 			>
 				<SQLiteProvider databaseName="mySQLiteDB.db" useSuspense>
-					<Stack.Navigator initialRouteName="ConfigScreen">
-						<Stack.Screen name="Menu" component={Menu} />
-						<Stack.Screen name="ScanScreen" component={ScanScreen} />
-						<Stack.Screen
-							name="ConfigScreen"
-							component={ConfigScreen}
-							options={
-								{
-									// Set the presentation mode to modal for our modal route.
-									// presentation: 'modal',
-								}
-							}
-						/>
-						<Stack.Screen name="AuthScreen" component={AuthScreen} />
-						<Stack.Screen
-							name="ListScreen"
-							component={ListScreen}
-							options={{
-								headerTitle: 'Documents',
-								//headerStyle: styles.header,
-								headerTitleStyle: styles.header,
-							}}
-						/>
-					</Stack.Navigator>
+					<MainNavigation />
+					{/*<Stack.Navigator initialRouteName="ConfigScreen">*/}
+					{/*	<Stack.Screen name="Menu" component={Menu} />*/}
+					{/*	<Stack.Screen name="ScanScreen" component={ScanScreen} />*/}
+					{/*	<Stack.Screen*/}
+					{/*		name="ConfigScreen"*/}
+					{/*		component={ConfigScreen}*/}
+					{/*		options={*/}
+					{/*			{*/}
+					{/*				// Set the presentation mode to modal for our modal route.*/}
+					{/*				// presentation: 'modal',*/}
+					{/*			}*/}
+					{/*		}*/}
+					{/*	/>*/}
+					{/*	<Stack.Screen name="AuthScreen" component={AuthScreen} />*/}
+					{/*	<Stack.Screen*/}
+					{/*		name="ListScreen"*/}
+					{/*		component={ListScreen}*/}
+					{/*		options={{*/}
+					{/*			headerTitle: 'Documents',*/}
+					{/*			//headerStyle: styles.header,*/}
+					{/*			headerTitleStyle: styles.header,*/}
+					{/*		}}*/}
+					{/*	/>*/}
+					{/*</Stack.Navigator>*/}
 				</SQLiteProvider>
 			</React.Suspense>
 		</NavigationContainer>

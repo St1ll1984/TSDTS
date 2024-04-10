@@ -1,11 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { HomeStackNavigatorProp } from '../types/type';
 import { DocType } from '../types/enum';
 import React from 'react';
-
-//import ListScreen from "./ListScreen";
+import { BottomBar, ButtonCustom } from '../components';
 
 const HomeScreen = () => {
 	const navigation = useNavigation<HomeStackNavigatorProp>();
@@ -15,29 +14,34 @@ const HomeScreen = () => {
 	console.log(Packages);
 	return (
 		<View style={styles.container}>
-			<Button
-				title="Упаковочные листы"
-				onPress={() =>
-					navigation.navigate('ListScreen', { paramName: DocType.Packages })
-				}
-			></Button>
-			<Text> </Text>
-			<Button
-				title="Поступление товаров"
-				onPress={() =>
-					navigation.navigate('ListScreen', { paramName: DocType.Goodsreceipt })
-				}
-			></Button>
-			<Text> </Text>
-			<Button
-				title="Инвентаризация"
-				onPress={() =>
-					navigation.navigate('ListScreen', {
-						paramName: DocType.Goodsinventory,
-					})
-				}
-			></Button>
-			<StatusBar style="auto" />
+			<View>
+				<ButtonCustom
+					title="Упаковочные листы"
+					onPress={() =>
+						navigation.navigate('ListScreen', { paramName: DocType.Packages })
+					}
+				></ButtonCustom>
+				<Text> </Text>
+				<ButtonCustom
+					title="Поступление товаров"
+					onPress={() =>
+						navigation.navigate('ListScreen', {
+							paramName: DocType.Goodsreceipt,
+						})
+					}
+				></ButtonCustom>
+				<Text> </Text>
+				<ButtonCustom
+					title="Инвентаризация"
+					onPress={() =>
+						navigation.navigate('ListScreen', {
+							paramName: DocType.Goodsinventory,
+						})
+					}
+				></ButtonCustom>
+				<StatusBar style="auto" />
+			</View>
+			<BottomBar config login />
 		</View>
 	);
 };
@@ -47,13 +51,14 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: '#fff',
 		alignItems: 'stretch',
-		justifyContent: 'center',
+		justifyContent: 'space-between',
 		textAlignVertical: 'auto',
+		padding: 15,
 	},
-	button: {
-		paddingTop: 100,
-		paddingBottom: 100,
-		borderRadius: 60,
+	ButtonWrapper: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		paddingHorizontal: 20,
 	},
 });
 
