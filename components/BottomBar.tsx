@@ -1,15 +1,10 @@
 import React from 'react';
-import {
-	View,
-	StyleSheet,
-	TouchableOpacity,
-	StyleProp,
-	ViewStyle,
-} from 'react-native';
+import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '../const/colors';
 import { useNavigation } from '@react-navigation/native';
 import { HomeStackNavigatorProp } from '../types/type';
+import { ButtonIcon } from './index';
 
 interface IBottomBarProps {
 	login?: boolean;
@@ -20,33 +15,34 @@ interface IBottomBarProps {
 
 const BottomBar = ({ login, menu, style }: IBottomBarProps) => {
 	const navigation = useNavigation<HomeStackNavigatorProp>();
+	const sizeIcon = 35;
 	return (
 		<View style={[styles.ButtonWrapper, style]}>
 			{login && (
-				<TouchableOpacity
-					activeOpacity={0.6}
-					style={styles.button}
-					onPress={() => navigation.navigate('Login')}
-				>
-					<MaterialIcons name="login" size={35} style={styles.buttonIcon} />
-				</TouchableOpacity>
+				<ButtonIcon onPress={() => navigation.navigate('Login')}>
+					<MaterialIcons
+						name="login"
+						size={sizeIcon}
+						style={styles.buttonIcon}
+					/>
+				</ButtonIcon>
 			)}
 			{menu && (
-				<TouchableOpacity
-					activeOpacity={0.6}
-					style={styles.button}
-					onPress={() => navigation.navigate('Menu')}
-				>
-					<MaterialIcons name="menu-book" size={35} style={styles.buttonIcon} />
-				</TouchableOpacity>
+				<ButtonIcon onPress={() => navigation.navigate('Menu')}>
+					<MaterialIcons
+						name="menu-book"
+						size={sizeIcon}
+						style={styles.buttonIcon}
+					/>
+				</ButtonIcon>
 			)}
-			<TouchableOpacity
-				activeOpacity={0.6}
-				style={styles.button}
-				onPress={() => navigation.navigate('Config')}
-			>
-				<MaterialIcons name="settings" size={35} style={styles.buttonIcon} />
-			</TouchableOpacity>
+			<ButtonIcon onPress={() => navigation.navigate('Config')}>
+				<MaterialIcons
+					name="settings"
+					size={sizeIcon}
+					style={styles.buttonIcon}
+				/>
+			</ButtonIcon>
 		</View>
 	);
 };
@@ -57,12 +53,8 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		paddingHorizontal: 20,
 	},
-	button: {
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
 	buttonIcon: {
-		color: COLORS.darkBlue,
+		color: COLORS.grey,
 	},
 });
 
