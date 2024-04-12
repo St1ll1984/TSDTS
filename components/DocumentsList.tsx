@@ -16,8 +16,9 @@ export default function DocumentsList({
 	const navigation = useNavigation<HomeStackNavigatorProp>();
 	//number >= 0 ? number : -number
 	return (
-		<View style={{ gap: 10 }}>
-			{/* {documents.map((document) => document.docStatus === (selectedIndex===0?"Formed":selectedIndex===1?"Scanning":"Done" ) )  {
+		<View style={{ paddingBottom: 30 }}>
+			<View style={{ gap: 10 }}>
+				{/* {documents.map((document) => document.docStatus === (selectedIndex===0?"Formed":selectedIndex===1?"Scanning":"Done" ) )  {
         return (
           <TouchableOpacity key={document.id} onPress={()=>navigation.navigate('ScanScreen', {par: document.docId})}>
             <DocumentsListItem document={document} />
@@ -25,29 +26,31 @@ export default function DocumentsList({
         );
       })} */}
 
-			{documents.map((document) => {
-				if (
-					document.docStatus === selectedIndex
-					// (selectedIndex === 0
-					//   ? "Formed"
-					//   : selectedIndex === 1
-					//   ? "Scanning"
-					//   : "Done")
-				) {
-					return (
-						<TouchableOpacity
-							key={document.id}
-							onPress={() =>
-								navigation.navigate('ScanScreen', { par: document.docId })
-							}
-						>
-							<DocumentsListItem document={document} />
-						</TouchableOpacity>
-					);
-				} else {
-					return null; // If the condition doesn't match, return null or empty fragment
-				}
-			})}
+				{documents.map((document) => {
+					if (
+						document.docStatus === selectedIndex
+						// (selectedIndex === 0
+						//   ? "Formed"
+						//   : selectedIndex === 1
+						//   ? "Scanning"
+						//   : "Done")
+					) {
+						return (
+							<TouchableOpacity
+								key={document.id}
+								onPress={() => {
+									navigation.navigate('ScanScreen', { par: document.docId });
+									console.log(document.docId);
+								}}
+							>
+								<DocumentsListItem document={document} />
+							</TouchableOpacity>
+						);
+					} else {
+						return null; // If the condition doesn't match, return null or empty fragment
+					}
+				})}
+			</View>
 		</View>
 	);
 }

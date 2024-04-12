@@ -32,6 +32,8 @@ export interface Documents {
 	docStatus: DocStatus; //"Formed" | "Scanning" | "Done";
 	articleQtyScan: number;
 	articleRowNumber: number;
+	departuredate: number;
+	counterparty: string;
 }
 
 export interface IUser {
