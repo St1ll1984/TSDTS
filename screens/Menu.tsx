@@ -11,7 +11,7 @@ const HomeScreen = () => {
 	// constans DocumType = DocType;
 
 	let Packages: DocType = DocType.Packages;
-	console.log(Packages);
+	// console.log(Packages);
 	return (
 		<View style={styles.container}>
 			<View>

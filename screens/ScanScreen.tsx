@@ -20,47 +20,45 @@ interface DocumentListItemProps {
 
 const ScanScreen = ({ route }: any) => {
 	const { par } = route.params;
+	console.log('par', par);
 	// constans navigation = useNavigation();
 	const [count, setCount] = useState<number>(1);
 	const [box, setBox] = useState<number>(1);
 	const [inputText, setInputText] = useState('');
 	const [itemArticle, setItemArticle] = useState<Documents>();
-	// console.log('itemArticle', itemArticle);
 	const db = useSQLiteContext();
 	const textInputRef = useRef<TextInput | null>(null);
+	console.log('count', count);
 
 	useEffect(() => {
 		db.withExclusiveTransactionAsync(async () => {
-			const result = await getData(count);
-			// console.log('result', result);
-			// console.log('result[0]', result[0]);
+			await getData(count, par);
+			//  console.log('result', result);
+			//  console.log('result[0]', result[0]);
+			 
 		});
+		
 	}, [count]);
 
-	async function getData(count: number) {
-		return await db.getAllAsync<Documents>(
-			`Select * from documents where docId = ${par} and articleRowNumber=${count}`,
+	async function getData(count: number, par: string) {
+		const result = await db.getAllAsync<Documents>(
+			`Select * from documents where docId = ? and articleRowNumber = ?`, [par, count]
 		);
-		// console.log(result);
-		// if (textInputRef.current !== null) {
-		// 	// textInputRef.current.focus(TextInput);
-		// 	textInputRef.current.focus();
-		// }
-		// Keyboard.dismiss();
-		// if (result.length) {
-		// 	console.log('result', result);
-		// 	console.log('result[0]', result[0]);
-		// 	setItemArticle(result[0]);
-		// 	console.log("Error! Row doesn't exist");
-		// 	return;
-		// 	const name = result[0].articleName;
-		// 	const qty = result[0].articleQty;
-		// }
-	}
+		setItemArticle(result[0]);
+		
+		console.log('par2', par);
+		console.log('count2', count);
+		console.log('itemArticle2', result[0]);
+		console.log('qtyItem', qtyItem);
+		
+		}
+	
+
+	
 
 	const switchOffKeyboard = () => {
 		Keyboard.dismiss();
-	};
+	}
 
 	return (
 		<KeyboardAvoidingView

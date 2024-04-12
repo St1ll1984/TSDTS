@@ -29,8 +29,8 @@ const ListScreen = ({ route }: any) => {
 		navigation.setOptions({
 			headerTitle: 'Документы ' + paramName.toString(), // Замените 'Новый заголовок' на желаемый заголовок
 		});
-		console.log('123456789');
-		console.log(paramName);
+		// console.log('123456789');
+		// console.log(paramName);
 	});
 
 	useEffect(() => {
