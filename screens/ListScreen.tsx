@@ -11,9 +11,12 @@ import { ScrollView } from 'react-native-gesture-handler';
 import DocumentsList from '../components/DocumentsList';
 import { HomeStackNavigatorProp } from '../types/type';
 import { ButtonGroup } from '@rneui/themed';
+import { BottomBar } from '../components';
 
 const ListScreen = ({ route }: any) => {
 	const { paramName } = route.params;
+	// console.log('route', route);
+	// console.log('paramName', paramName);
 	const navigation = useNavigation();
 	const [documents, setDocuments] = useState<Documents[]>([]);
 	const db = useSQLiteContext();
@@ -46,7 +49,8 @@ const ListScreen = ({ route }: any) => {
 	}
 	console.log(selectedIndex);
 	return (
-		<View>
+		// <View style={{ paddingBottom: 20 }}>
+		<View style={styles.container}>
 			{/* <Text>List screen123+ {paramName}</Text>
 			 */}
 			{/* <ButtonGroup
@@ -66,11 +70,23 @@ const ListScreen = ({ route }: any) => {
 				containerStyle={{ marginBottom: 0, marginTop: 10 }}
 			/>
 
-			<ScrollView contentContainerStyle={{ padding: 12, paddingVertical: 10 }}>
+			<ScrollView
+				contentContainerStyle={{
+					padding: 10,
+				}}
+			>
 				<DocumentsList documents={documents} selectedIndex={selectedIndex} />
 				<Text>{paramName}</Text>
 				<StatusBar style="auto" />
 			</ScrollView>
+			<BottomBar
+				config
+				menu
+				login
+				style={{
+					paddingVertical: 5,
+				}}
+			/>
 		</View>
 	);
 };
@@ -78,9 +94,6 @@ const ListScreen = ({ route }: any) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#fff',
-		alignItems: 'center',
-		justifyContent: 'center',
 	},
 });
 

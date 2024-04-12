@@ -1,11 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Keyboard } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { HomeStackNavigatorProp } from '../types/type';
+import {
+	Keyboard,
+	KeyboardAvoidingView,
+	StyleSheet,
+	Text,
+	View,
+} from 'react-native';
+import { Documents } from '../types/type';
 import { useEffect, useRef, useState } from 'react';
 import { useSQLiteContext } from 'expo-sqlite/next';
-import { Documents } from '../types/type';
 import { TextInput } from 'react-native-gesture-handler';
+import { ButtonIcon } from '../components';
+import { COLORS } from '../const/colors';
+import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 
 interface DocumentListItemProps {
 	document: Documents;
@@ -15,93 +22,163 @@ const ScanScreen = ({ route }: any) => {
 	const { par } = route.params;
 	// constans navigation = useNavigation();
 	const [count, setCount] = useState<number>(1);
-	let name: String = 'Номенклатура';
-	let qty: number = 999999;
+	const [box, setBox] = useState<number>(1);
+	const [inputText, setInputText] = useState('');
+	const [itemArticle, setItemArticle] = useState<Documents>();
+	// console.log('itemArticle', itemArticle);
 	const db = useSQLiteContext();
 	const textInputRef = useRef<TextInput | null>(null);
 
 	useEffect(() => {
 		db.withExclusiveTransactionAsync(async () => {
-			await getData(count);
+			const result = await getData(count);
+			// console.log('result', result);
+			// console.log('result[0]', result[0]);
 		});
 	}, [count]);
 
 	async function getData(count: number) {
-		const result = await db.getAllAsync<Documents>(`Select * from documents `);
-		console.log(result);
-		if (textInputRef.current !== null) {
-			// textInputRef.current.focus(TextInput);
-			textInputRef.current.focus();
-		}
+		return await db.getAllAsync<Documents>(
+			`Select * from documents where docId = ${par} and articleRowNumber=${count}`,
+		);
+		// console.log(result);
+		// if (textInputRef.current !== null) {
+		// 	// textInputRef.current.focus(TextInput);
+		// 	textInputRef.current.focus();
+		// }
+		// Keyboard.dismiss();
+		// if (result.length) {
+		// 	console.log('result', result);
+		// 	console.log('result[0]', result[0]);
+		// 	setItemArticle(result[0]);
+		// 	console.log("Error! Row doesn't exist");
+		// 	return;
+		// 	const name = result[0].articleName;
+		// 	const qty = result[0].articleQty;
+		// }
+	}
+
+	const switchOffKeyboard = () => {
 		Keyboard.dismiss();
-		if (result.length > 0) {
-			name = result[0].articleName;
-			qty = result[0].articleQty;
-		} else {
-		}
-	}
-
-	function getDataNext() {
-		setCount(count + 1);
-	}
-
-	function getDataPrev() {
-		if (count > 1) {
-			setCount(count - 1);
-		}
-	}
+	};
 
 	return (
-		<View style={styles.container}>
-			{/* отображение шапки */}
+		<KeyboardAvoidingView
+			style={styles.container}
+			// behavior={'padding'}
+			// keyboardVerticalOffset={0}
+		>
 			<View style={styles.containerTop}>
-				<Text>
-					Отсканируйте номенклатуру: {'\n'} {name} {'\n'} в количестве {'\n'}{' '}
-					{qty} {'\n'} {count}
-				</Text>
-				<Text>Введите количество:</Text>
-				<TextInput
-					ref={textInputRef}
-					style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-					placeholder="Введите текст"
-				/>
-
-				<Text>Параметр {par}</Text>
+				<View>
+					<Text style={styles.text}>Отсканируйте номенклатуру:</Text>
+					<Text style={[styles.text, styles.textAccent]}>{}</Text>
+				</View>
+				<View>
+					<Text style={styles.text}>
+						ШК: <Text style={[styles.text, styles.textAccent]}>12345678</Text>
+					</Text>
+				</View>
+				<View>
+					<Text style={styles.text}>
+						В количестве:{' '}
+						<Text style={[styles.text, styles.textAccent]}>18 шт.</Text>
+					</Text>
+				</View>
+				<View>
+					<Text style={styles.text}>
+						Место:{' '}
+						<Text style={[styles.text, styles.textAccent]}>A1-Б4-Ф4</Text>
+					</Text>
+				</View>
 			</View>
 
-			{/* кнопки низ страницы */}
+			<View style={styles.containerBox}>
+				<Text style={styles.text}>Ящик:</Text>
+				<View style={styles.wrapperBoxButtons}>
+					<ButtonIcon onPress={() => setBox(box - 1)} disabled={box === 1}>
+						<AntDesign
+							name="minussquareo"
+							size={30}
+							color={box === 1 ? COLORS.grey : COLORS.black}
+						/>
+					</ButtonIcon>
+					<View
+						style={{ backgroundColor: COLORS.lightGrey, width: 30, height: 30 }}
+					>
+						<Text style={[styles.text, styles.textAccent, { fontSize: 20 }]}>
+							{box}
+						</Text>
+					</View>
+					<ButtonIcon onPress={() => setBox(box + 1)}>
+						<AntDesign name="plussquareo" size={30} color={COLORS.black} />
+					</ButtonIcon>
+				</View>
+			</View>
+			<TextInput
+				ref={textInputRef}
+				style={styles.textInput}
+				placeholder="Введите текст"
+				value={inputText}
+				onChangeText={(value) => setInputText(value)}
+				showSoftInputOnFocus={false}
+			/>
+
+			<View style={styles.containerComment}>
+				<Text style={styles.text}>Комментарий:</Text>
+				<Text style={[styles.text, { fontSize: 16, fontStyle: 'italic' }]}>
+					Добавить к заказу 1 шт подрамник
+				</Text>
+			</View>
+
 			<View style={styles.containerBottom}>
-				<Button title="Назад" onPress={() => getDataPrev()}></Button>
-				<Button title="Вперед" onPress={() => getDataNext()}></Button>
+				<ButtonIcon onPress={() => setCount(count - 1)} disabled={count === 1}>
+					<FontAwesome5
+						name="arrow-left"
+						size={30}
+						color={count === 1 ? COLORS.grey : COLORS.black}
+					/>
+				</ButtonIcon>
+				<ButtonIcon onPress={() => setCount(count + 1)}>
+					<FontAwesome5 name="arrow-right" size={30} color={COLORS.black} />
+				</ButtonIcon>
 			</View>
 
 			<StatusBar style="auto" />
-		</View>
+		</KeyboardAvoidingView>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		// justifyContent: 'space-between',
+		// alignItems: 'stretch',
+		paddingVertical: 10,
+		paddingHorizontal: 10,
 		backgroundColor: '#fff',
-		alignItems: 'stretch',
-		justifyContent: 'center',
-		textAlignVertical: 'auto',
-	},
-	textInput: {
-		flex: 0,
-		backgroundColor: 'grey',
-		alignItems: 'stretch',
-		justifyContent: 'center',
-		textAlignVertical: 'auto',
 	},
 	containerTop: {
-		//gap: 100,
-		flex: 1,
-		backgroundColor: '#fff',
+		gap: 7,
+	},
+	containerBox: {
+		marginVertical: 10,
+	},
+	wrapperBoxButtons: {
+		flexDirection: 'row',
+		justifyContent: 'center',
 		alignItems: 'center',
-		justifyContent: 'space-evenly',
-		textAlignVertical: 'auto',
+		gap: 15,
+	},
+	containerComment: {
+		marginBottom: 'auto',
+	},
+	text: {
+		fontSize: 18,
+		textAlign: 'center',
+	},
+	textAccent: {
+		fontWeight: 'bold',
+		fontStyle: 'italic',
 	},
 	containerBottom: {
 		flex: 0,
@@ -109,11 +186,16 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 		alignItems: 'stretch',
 		justifyContent: 'space-between',
+		paddingHorizontal: 15,
 	},
-	button: {
-		paddingTop: 100,
-		paddingBottom: 100,
-		borderRadius: 60,
+	textInput: {
+		borderRadius: 5,
+		height: 40,
+		borderColor: COLORS.darkGrey,
+		borderWidth: 1,
+		paddingHorizontal: 10,
+		marginBottom: 25,
+		textAlign: 'center',
 	},
 });
 

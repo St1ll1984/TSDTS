@@ -6,15 +6,16 @@ interface IButtonIconProps {
 	onPress?: () => void;
 	extraStyle?: string;
 	children?: React.ReactNode;
-	width?: number;
+	disabled?: boolean;
 }
 
-const ButtonIcon = ({ children, onPress, width }: IButtonIconProps) => {
+const ButtonIcon = ({ children, onPress, disabled }: IButtonIconProps) => {
 	return (
 		<TouchableOpacity
 			activeOpacity={0.6}
 			style={styles.button}
 			onPress={onPress}
+			disabled={disabled}
 		>
 			{children}
 		</TouchableOpacity>
