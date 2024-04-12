@@ -49,7 +49,7 @@ const ScanScreen = ({ route }: any) => {
 		console.log('par2', par);
 		console.log('count2', count);
 		console.log('itemArticle2', result[0]);
-		console.log('qtyItem', qtyItem);
+		//console.log('qtyItem', qtyItem);
 		
 		}
 	
