@@ -4,7 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '../const/colors';
 import { useNavigation } from '@react-navigation/native';
 import { HomeStackNavigatorProp } from '../types/type';
-import { ButtonIcon } from './index';
+import ButtonIcon from './ButtonIcon';
 
 interface IBottomBarProps {
 	login?: boolean;

@@ -18,9 +18,9 @@ const ListScreen = ({ route }: any) => {
 	// console.log('route', route);
 	// console.log('paramName', paramName);
 	const navigation = useNavigation();
-	const [documents, setDocuments] = useState<Documents[]>([]);
+	// const [documents, setDocuments] = useState<Documents[]>([]);
+	const [documents, setDocuments] = useState<Documents[][]>([]);
 	const db = useSQLiteContext();
-
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	//constans [selectedIndexes, setSelectedIndexes] = useState([1,1,1]);
 	//constans navigation = useNavigation<HomeStackNavigatorProp>();
@@ -29,8 +29,6 @@ const ListScreen = ({ route }: any) => {
 		navigation.setOptions({
 			headerTitle: 'Документы ' + paramName.toString(), // Замените 'Новый заголовок' на желаемый заголовок
 		});
-		// console.log('123456789');
-		// console.log(paramName);
 	});
 
 	useEffect(() => {
@@ -44,10 +42,25 @@ const ListScreen = ({ route }: any) => {
 			`Select * from documents WHERE docType = ? ORDER BY docDate `,
 			[paramName],
 		);
-		setDocuments(result);
-		console.log(result);
+		// ====================================
+		const groupedByDocNumber = result.reduce(
+			(acc: { [key: string]: Documents[] }, item) => {
+				if (!acc[item.docNumber]) {
+					acc[item.docNumber] = [];
+				}
+				acc[item.docNumber].push(item);
+				return acc;
+			},
+			{},
+		);
+
+		const resultGroupedByDocNumber = Object.values(groupedByDocNumber);
+		setDocuments(resultGroupedByDocNumber);
+		// ====================================
+		// setDocuments(result);
+		// console.log(result);
 	}
-	console.log(selectedIndex);
+	// console.log(selectedIndex);
 	return (
 		// <View style={{ paddingBottom: 20 }}>
 		<View style={styles.container}>
@@ -76,8 +89,8 @@ const ListScreen = ({ route }: any) => {
 				}}
 			>
 				<DocumentsList documents={documents} selectedIndex={selectedIndex} />
-				<Text>{paramName}</Text>
-				<StatusBar style="auto" />
+				{/*<Text>{paramName}</Text>*/}
+				{/*<StatusBar style="auto" />*/}
 			</ScrollView>
 			<BottomBar
 				config

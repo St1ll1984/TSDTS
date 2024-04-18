@@ -1,4 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
+// import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { HomeStackNavigatorProp } from '../types/type';
@@ -39,7 +39,7 @@ const HomeScreen = () => {
 						})
 					}
 				></ButtonCustom>
-				<StatusBar style="auto" />
+				{/*<StatusBar style="auto" />*/}
 			</View>
 			<BottomBar config login />
 		</View>
