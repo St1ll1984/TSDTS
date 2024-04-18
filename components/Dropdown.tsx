@@ -6,7 +6,7 @@ import { COLORS } from '../const/colors';
 import { HomeStackNavigatorProp, IUserJSON } from '../types/type';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import { ButtonIcon } from './index';
+import ButtonIcon from './ButtonIcon';
 
 interface IDropdownProps {
 	data: IUserJSON[];

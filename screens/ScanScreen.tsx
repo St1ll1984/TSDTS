@@ -10,7 +10,7 @@ import { Documents } from '../types/type';
 import { useEffect, useRef, useState } from 'react';
 import { useSQLiteContext } from 'expo-sqlite/next';
 import { TextInput } from 'react-native-gesture-handler';
-import { ButtonIcon } from '../components';
+import { ButtonCustom, ButtonIcon } from '../components';
 import { COLORS } from '../const/colors';
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 
@@ -20,7 +20,7 @@ interface DocumentListItemProps {
 
 const ScanScreen = ({ route }: any) => {
 	const { par } = route.params;
-	console.log('par', par);
+	// console.log('par', par);
 	// constans navigation = useNavigation();
 	const [count, setCount] = useState<number>(1);
 	const [box, setBox] = useState<number>(1);
@@ -28,37 +28,31 @@ const ScanScreen = ({ route }: any) => {
 	const [itemArticle, setItemArticle] = useState<Documents>();
 	const db = useSQLiteContext();
 	const textInputRef = useRef<TextInput | null>(null);
-	console.log('count', count);
+	// console.log('count', count);
 
 	useEffect(() => {
 		db.withExclusiveTransactionAsync(async () => {
 			await getData(count, par);
 			//  console.log('result', result);
 			//  console.log('result[0]', result[0]);
-			 
 		});
-		
 	}, [count]);
 
 	async function getData(count: number, par: string) {
 		const result = await db.getAllAsync<Documents>(
-			`Select * from documents where docId = ? and articleRowNumber = ?`, [par, count]
+			`Select * from documents where docId = ? and articleRowNumber = ?`,
+			[par, count],
 		);
 		setItemArticle(result[0]);
-		
-		console.log('par2', par);
-		console.log('count2', count);
-		console.log('itemArticle2', result[0]);
+
+		// console.log('par2', par);
+		// console.log('count2', count);
+		// console.log('itemArticle2', result[0]);
 		//console.log('qtyItem', qtyItem);
-		
-		}
-	
-
-	
-
-	const switchOffKeyboard = () => {
-		Keyboard.dismiss();
 	}
+
+	const departureDateToString = String(itemArticle?.departuredate);
+	const departureDateToString2 = itemArticle?.departuredate.toString();
 
 	return (
 		<KeyboardAvoidingView
@@ -69,7 +63,9 @@ const ScanScreen = ({ route }: any) => {
 			<View style={styles.containerTop}>
 				<View>
 					<Text style={styles.text}>Отсканируйте номенклатуру:</Text>
-					<Text style={[styles.text, styles.textAccent]}>{}</Text>
+					<Text style={[styles.text, styles.textAccent]}>
+						{itemArticle?.articleName}
+					</Text>
 				</View>
 				<View>
 					<Text style={styles.text}>
@@ -79,7 +75,9 @@ const ScanScreen = ({ route }: any) => {
 				<View>
 					<Text style={styles.text}>
 						В количестве:{' '}
-						<Text style={[styles.text, styles.textAccent]}>18 шт.</Text>
+						<Text style={[styles.text, styles.textAccent]}>
+							{itemArticle?.articleQty} шт.
+						</Text>
 					</Text>
 				</View>
 				<View>
@@ -96,19 +94,25 @@ const ScanScreen = ({ route }: any) => {
 					<ButtonIcon onPress={() => setBox(box - 1)} disabled={box === 1}>
 						<AntDesign
 							name="minussquareo"
-							size={30}
+							size={40}
 							color={box === 1 ? COLORS.grey : COLORS.black}
 						/>
 					</ButtonIcon>
 					<View
-						style={{ backgroundColor: COLORS.lightGrey, width: 30, height: 30 }}
+						style={{
+							backgroundColor: COLORS.lightGrey,
+							width: 40,
+							height: 40,
+							justifyContent: 'center',
+							alignItems: 'center',
+						}}
 					>
 						<Text style={[styles.text, styles.textAccent, { fontSize: 20 }]}>
 							{box}
 						</Text>
 					</View>
 					<ButtonIcon onPress={() => setBox(box + 1)}>
-						<AntDesign name="plussquareo" size={30} color={COLORS.black} />
+						<AntDesign name="plussquareo" size={40} color={COLORS.black} />
 					</ButtonIcon>
 				</View>
 			</View>
@@ -126,6 +130,9 @@ const ScanScreen = ({ route }: any) => {
 				<Text style={[styles.text, { fontSize: 16, fontStyle: 'italic' }]}>
 					Добавить к заказу 1 шт подрамник
 				</Text>
+			</View>
+			<View>
+				<ButtonCustom title={'Сохранить'} />
 			</View>
 
 			<View style={styles.containerBottom}>
@@ -156,7 +163,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 	},
 	containerTop: {
-		gap: 7,
+		// gap: 7,
 	},
 	containerBox: {
 		marginVertical: 10,
@@ -179,12 +186,12 @@ const styles = StyleSheet.create({
 		fontStyle: 'italic',
 	},
 	containerBottom: {
-		flex: 0,
 		flexDirection: 'row',
 		backgroundColor: '#fff',
 		alignItems: 'stretch',
 		justifyContent: 'space-between',
 		paddingHorizontal: 15,
+		paddingTop: 15,
 	},
 	textInput: {
 		borderRadius: 5,

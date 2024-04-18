@@ -1,38 +1,40 @@
 import { Documents } from '../types/type';
-import { TouchableOpacity, View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Card from './ui/Card';
+import { COLORS } from '../const/colors';
 
 interface DocumentListItemProps {
-	document: Documents;
+	document: Documents[];
 }
 
 export default function DocumentsListItem({ document }: DocumentListItemProps) {
+	const quantityItemsInDocument = document.length;
+
 	return (
 		<Card>
 			<View style={styles.container}>
-				<Ionicons name="cart-outline" size={50} color="black" />
+				<View style={{ alignItems: 'center' }}>
+					<Ionicons name="cart-outline" size={50} color="black" />
+					<Text
+						style={[styles.text, styles.textAccent, { color: COLORS.darkGrey }]}
+					>
+						{quantityItemsInDocument} поз.
+					</Text>
+				</View>
 				<View>
 					<Text style={styles.text}>
 						Дата отгрузки:{' '}
-						<Text style={styles.textAccent}>{document.departuredate}</Text>
+						<Text style={styles.textAccent}>{document[0].departuredate}</Text>
 					</Text>
 					<Text style={styles.text}>
 						№ упаковки:{' '}
-						<Text style={styles.textAccent}>{document.docNumber}</Text>
+						<Text style={styles.textAccent}>{document[0].docNumber}</Text>
 					</Text>
 					<Text style={styles.text}>
 						Контрагент:{' '}
-						<Text style={styles.textAccent}>{document.counterparty}</Text>
+						<Text style={styles.textAccent}>{document[0].counterparty}</Text>
 					</Text>
-					<Text style={styles.text}>
-						Позиций: <Text style={styles.textAccent}>{5}</Text> //TODO need
-						calculate qty rowNumber in docType
-					</Text>
-					{/*<Text style={styles.text}>*/}
-					{/*	{document.articleName} {'\n'} количество: {document.articleQty}{' '}*/}
-					{/*	{'\n'} ед. {document.articleUnit}*/}
-					{/*</Text>*/}
 				</View>
 			</View>
 		</Card>

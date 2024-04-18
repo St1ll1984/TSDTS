@@ -1,4 +1,4 @@
-import { TouchableOpacity, View, Text } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { Documents } from '../types/type';
 import React from 'react';
 import DocumentsListItem from './DocumentsListItem';
@@ -9,7 +9,8 @@ export default function DocumentsList({
 	documents,
 	selectedIndex,
 }: {
-	documents: Documents[];
+	// documents: Documents[];
+	documents: Documents[][];
 	selectedIndex: number;
 }) {
 	//selectedIndex==0:"Formed", ?selectedIndex=1:"Scanning", "Done"
@@ -26,9 +27,10 @@ export default function DocumentsList({
         );
       })} */}
 
-				{documents.map((document) => {
+				{documents.map((document, index) => {
 					if (
-						document.docStatus === selectedIndex
+						// document.docStatus === selectedIndex
+						document[0].docStatus === selectedIndex
 						// (selectedIndex === 0
 						//   ? "Formed"
 						//   : selectedIndex === 1
@@ -37,10 +39,12 @@ export default function DocumentsList({
 					) {
 						return (
 							<TouchableOpacity
-								key={document.id}
+								// key={document.id}
+								key={index}
 								onPress={() => {
-									navigation.navigate('ScanScreen', { par: document.docId });
-									console.log(document.docId);
+									navigation.navigate('ScanScreen', {
+										par: document[index].docId,
+									});
 								}}
 							>
 								<DocumentsListItem document={document} />
