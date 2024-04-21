@@ -15,10 +15,7 @@ import { BottomBar } from '../components';
 
 const ListScreen = ({ route }: any) => {
 	const { paramName } = route.params;
-	// console.log('route', route);
-	// console.log('paramName', paramName);
 	const navigation = useNavigation();
-	// const [documents, setDocuments] = useState<Documents[]>([]);
 	const [documents, setDocuments] = useState<Documents[][]>([]);
 	const db = useSQLiteContext();
 	const [selectedIndex, setSelectedIndex] = useState(0);

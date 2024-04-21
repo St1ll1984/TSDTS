@@ -10,6 +10,15 @@ interface DocumentListItemProps {
 
 export default function DocumentsListItem({ document }: DocumentListItemProps) {
 	const quantityItemsInDocument = document.length;
+	const options: Intl.DateTimeFormatOptions = {
+		weekday: 'short',
+		year: '2-digit',
+		month: 'numeric',
+		day: 'numeric',
+	};
+	const departureTimeStampToDate = new Date(
+		document[0]?.departuredate,
+	).toLocaleDateString('RU', options);
 
 	return (
 		<Card>
@@ -25,7 +34,7 @@ export default function DocumentsListItem({ document }: DocumentListItemProps) {
 				<View>
 					<Text style={styles.text}>
 						Дата отгрузки:{' '}
-						<Text style={styles.textAccent}>{document[0].departuredate}</Text>
+						<Text style={styles.textAccent}>{departureTimeStampToDate}</Text>
 					</Text>
 					<Text style={styles.text}>
 						№ упаковки:{' '}

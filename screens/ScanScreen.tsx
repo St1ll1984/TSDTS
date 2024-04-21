@@ -1,13 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
-import {
-	Keyboard,
-	KeyboardAvoidingView,
-	StyleSheet,
-	Text,
-	View,
-} from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
 import { Documents } from '../types/type';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSQLiteContext } from 'expo-sqlite/next';
 import { TextInput } from 'react-native-gesture-handler';
 import { ButtonCustom, ButtonIcon } from '../components';
@@ -20,39 +14,84 @@ interface DocumentListItemProps {
 
 const ScanScreen = ({ route }: any) => {
 	const { par } = route.params;
-	// console.log('par', par);
 	// constans navigation = useNavigation();
 	const [count, setCount] = useState<number>(1);
 	const [box, setBox] = useState<number>(1);
 	const [inputText, setInputText] = useState('');
 	const [itemArticle, setItemArticle] = useState<Documents>();
+	const [itemArticleQuantity, setItemArticleQuantity] = useState<number>(0);
+	const [scannedQuantityItems, setScannedQuantityItems] = useState(0);
+	const [memoryStartScannedQty, setMemoryStartScannedQty] = useState(-1);
 	const db = useSQLiteContext();
 	const textInputRef = useRef<TextInput | null>(null);
-	// console.log('count', count);
 
 	useEffect(() => {
 		db.withExclusiveTransactionAsync(async () => {
+			if (!itemArticle) return;
+			if (memoryStartScannedQty === scannedQuantityItems) return;
+			await updateData(scannedQuantityItems, par, itemArticle);
+		});
+
+		db.withExclusiveTransactionAsync(async () => {
 			await getData(count, par);
-			//  console.log('result', result);
-			//  console.log('result[0]', result[0]);
 		});
 	}, [count]);
 
+	useEffect(() => {
+		textInputRef.current?.focus();
+	}, []);
+
 	async function getData(count: number, par: string) {
-		const result = await db.getAllAsync<Documents>(
+		const articleByDocId = await db.getAllAsync<Documents>(
 			`Select * from documents where docId = ? and articleRowNumber = ?`,
 			[par, count],
 		);
-		setItemArticle(result[0]);
+		const allArticles = await db.getAllAsync<Documents>(
+			`Select * from documents where docId = ? `,
+			[par],
+		);
 
-		// console.log('par2', par);
-		// console.log('count2', count);
-		// console.log('itemArticle2', result[0]);
-		//console.log('qtyItem', qtyItem);
+		setItemArticle(articleByDocId[0]);
+		setItemArticleQuantity(allArticles.length);
+		setScannedQuantityItems(articleByDocId[0].articleQtyScan);
+		setMemoryStartScannedQty(articleByDocId[0].articleQtyScan);
 	}
 
-	const departureDateToString = String(itemArticle?.departuredate);
-	const departureDateToString2 = itemArticle?.departuredate.toString();
+	async function updateData(
+		scannedQuantityItems: number,
+		par: string,
+		article: Documents,
+	) {
+		if (memoryStartScannedQty !== scannedQuantityItems) {
+			await db.runAsync(
+				`UPDATE documents SET articleQtyScan = ? WHERE docId = ? and articleRowNumber = ? and docNumber=? and articleName=? and articleUnit=? and docType=? and docStatus=?`,
+				scannedQuantityItems,
+				par,
+				article.articleRowNumber,
+				article.docNumber,
+				article.articleName,
+				article.articleUnit,
+				article.docType,
+				article.docStatus,
+			);
+		}
+	}
+
+	useEffect(() => {
+		if (inputText === itemArticle?.article.toString()) {
+			setScannedQuantityItems(scannedQuantityItems + 1);
+			setInputText('');
+		}
+	}, [inputText]);
+
+	// useEffect(() => {
+	// 	if (
+	// 		itemArticle?.articleQty === scannedQuantityItems &&
+	// 		memoryStartScannedQty !== scannedQuantityItems
+	// 	) {
+	// 		setCount(count + 1);
+	// 	}
+	// }, [scannedQuantityItems]);
 
 	return (
 		<KeyboardAvoidingView
@@ -69,7 +108,10 @@ const ScanScreen = ({ route }: any) => {
 				</View>
 				<View>
 					<Text style={styles.text}>
-						ШК: <Text style={[styles.text, styles.textAccent]}>12345678</Text>
+						ШК:{' '}
+						<Text style={[styles.text, styles.textAccent]}>
+							{itemArticle?.article}
+						</Text>
 					</Text>
 				</View>
 				<View>
@@ -117,11 +159,19 @@ const ScanScreen = ({ route }: any) => {
 				</View>
 			</View>
 			<TextInput
+				style={styles.textInput}
+				placeholder="Количество отсканированного"
+				value={String(scannedQuantityItems)}
+				// onChangeText={(value) => setScannedQuantityItems(value)}
+				// showSoftInputOnFocus={false}
+			/>
+			<TextInput
+				// readOnly
 				ref={textInputRef}
 				style={styles.textInput}
-				placeholder="Введите текст"
+				placeholder="Текущий шк"
 				value={inputText}
-				onChangeText={(value) => setInputText(value)}
+				onChangeText={(text) => setInputText(text)}
 				showSoftInputOnFocus={false}
 			/>
 
@@ -132,7 +182,9 @@ const ScanScreen = ({ route }: any) => {
 				</Text>
 			</View>
 			<View>
-				<ButtonCustom title={'Сохранить'} />
+				<ButtonCustom
+					title={count === itemArticleQuantity ? 'Готово' : 'Сохранить'}
+				/>
 			</View>
 
 			<View style={styles.containerBottom}>
@@ -143,8 +195,15 @@ const ScanScreen = ({ route }: any) => {
 						color={count === 1 ? COLORS.grey : COLORS.black}
 					/>
 				</ButtonIcon>
-				<ButtonIcon onPress={() => setCount(count + 1)}>
-					<FontAwesome5 name="arrow-right" size={30} color={COLORS.black} />
+				<ButtonIcon
+					onPress={() => setCount(count + 1)}
+					disabled={count === itemArticleQuantity}
+				>
+					<FontAwesome5
+						name="arrow-right"
+						size={30}
+						color={count === itemArticleQuantity ? COLORS.grey : COLORS.black}
+					/>
 				</ButtonIcon>
 			</View>
 
@@ -156,8 +215,6 @@ const ScanScreen = ({ route }: any) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		// justifyContent: 'space-between',
-		// alignItems: 'stretch',
 		paddingVertical: 10,
 		paddingHorizontal: 10,
 		backgroundColor: '#fff',

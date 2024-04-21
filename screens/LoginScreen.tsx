@@ -11,7 +11,6 @@ const LoginScreen = () => {
 	const navigation = useNavigation<HomeStackNavigatorProp>();
 
 	const handlePressButton = () => {
-		console.log('Press button');
 		navigation.navigate('Menu');
 	};
 	return (
