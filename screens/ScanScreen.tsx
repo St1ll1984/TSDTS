@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
 import { Documents } from '../types/type';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useSQLiteContext } from 'expo-sqlite/next';
 import { TextInput } from 'react-native-gesture-handler';
-import { ButtonCustom, ButtonIcon } from '../components';
+import { ButtonCustom, ButtonIcon, Input } from '../components';
 import { COLORS } from '../const/colors';
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 
@@ -24,7 +24,10 @@ const ScanScreen = ({ route }: any) => {
 	const [memoryStartScannedQty, setMemoryStartScannedQty] = useState(-1);
 	const db = useSQLiteContext();
 	const textInputRef = useRef<TextInput | null>(null);
-
+	// const textInputRef = React.createRef();
+	const [error, setError] = useState(false);
+	const [isFocused, setIsFocused] = useState(false);
+	console.log('memoryStartScannedQty', memoryStartScannedQty);
 	useEffect(() => {
 		db.withExclusiveTransactionAsync(async () => {
 			if (!itemArticle) return;
@@ -36,10 +39,6 @@ const ScanScreen = ({ route }: any) => {
 			await getData(count, par);
 		});
 	}, [count]);
-
-	useEffect(() => {
-		textInputRef.current?.focus();
-	}, []);
 
 	async function getData(count: number, par: string) {
 		const articleByDocId = await db.getAllAsync<Documents>(
@@ -84,20 +83,35 @@ const ScanScreen = ({ route }: any) => {
 		}
 	}, [inputText]);
 
-	// useEffect(() => {
-	// 	if (
-	// 		itemArticle?.articleQty === scannedQuantityItems &&
-	// 		memoryStartScannedQty !== scannedQuantityItems
-	// 	) {
-	// 		setCount(count + 1);
-	// 	}
-	// }, [scannedQuantityItems]);
+	useEffect(() => {
+		// if (
+		// 	itemArticle?.articleQty === scannedQuantityItems &&
+		// 	memoryStartScannedQty !== scannedQuantityItems
+		// ) {
+		// 	setCount(count + 1);
+		// }
+	}, [scannedQuantityItems]);
+
+	const handleError = () => {
+		if (
+			itemArticle?.articleQty !== scannedQuantityItems &&
+			itemArticle?.articleQty !== memoryStartScannedQty
+		) {
+			setError(true);
+		} else {
+			setError(false);
+		}
+	};
+
+	useEffect(() => {
+		handleError();
+	}, [scannedQuantityItems]);
 
 	return (
 		<KeyboardAvoidingView
 			style={styles.container}
-			// behavior={'padding'}
-			// keyboardVerticalOffset={0}
+			behavior="height"
+			keyboardVerticalOffset={-10}
 		>
 			<View style={styles.containerTop}>
 				<View>
@@ -158,21 +172,50 @@ const ScanScreen = ({ route }: any) => {
 					</ButtonIcon>
 				</View>
 			</View>
+
 			<TextInput
-				style={styles.textInput}
+				style={[
+					styles.textInput,
+					{
+						borderColor: error
+							? COLORS.red
+							: // : isFocused
+								// 	? COLORS.blue
+								COLORS.black,
+					},
+				]}
+				keyboardType="numeric"
 				placeholder="Количество отсканированного"
 				value={String(scannedQuantityItems)}
-				// onChangeText={(value) => setScannedQuantityItems(value)}
-				// showSoftInputOnFocus={false}
+				onChangeText={(text) => {
+					setScannedQuantityItems(Number(text));
+					setMemoryStartScannedQty(Number(text));
+				}}
+				onEndEditing={() => textInputRef.current?.focus()}
+				onFocus={() => setIsFocused(true)}
+				onBlur={() => {
+					// setIsFocused(false);
+					// console.log('onBlur');
+					// handleError();
+				}}
 			/>
 			<TextInput
-				// readOnly
 				ref={textInputRef}
-				style={styles.textInput}
+				style={[
+					styles.textInput,
+					// { borderColor: isFocused ? COLORS.blue : COLORS.black },
+				]}
+				keyboardType="numeric"
 				placeholder="Текущий шк"
 				value={inputText}
 				onChangeText={(text) => setInputText(text)}
 				showSoftInputOnFocus={false}
+				autoFocus
+				onFocus={() => {
+					// setIsFocused(true);
+					// handleError();
+				}}
+				// onBlur={() => setIsFocused(false)}
 			/>
 
 			<View style={styles.containerComment}>
@@ -215,7 +258,6 @@ const ScanScreen = ({ route }: any) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingVertical: 10,
 		paddingHorizontal: 10,
 		backgroundColor: '#fff',
 	},
@@ -223,7 +265,7 @@ const styles = StyleSheet.create({
 		// gap: 7,
 	},
 	containerBox: {
-		marginVertical: 10,
+		marginBottom: 10,
 	},
 	wrapperBoxButtons: {
 		flexDirection: 'row',
@@ -248,7 +290,7 @@ const styles = StyleSheet.create({
 		alignItems: 'stretch',
 		justifyContent: 'space-between',
 		paddingHorizontal: 15,
-		paddingTop: 15,
+		paddingTop: 10,
 	},
 	textInput: {
 		borderRadius: 5,
@@ -256,7 +298,7 @@ const styles = StyleSheet.create({
 		borderColor: COLORS.darkGrey,
 		borderWidth: 1,
 		paddingHorizontal: 10,
-		marginBottom: 25,
+		marginBottom: 10,
 		textAlign: 'center',
 	},
 });
